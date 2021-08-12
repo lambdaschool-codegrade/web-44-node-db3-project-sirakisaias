@@ -1,3 +1,4 @@
+const Schema = require('./scheme-model');
 /*
   If `scheme_id` does not exist in the database:
 
@@ -6,8 +7,19 @@
     "message": "scheme with scheme_id <actual id> not found"
   }
 */
-const checkSchemeId = (req, res, next) => {
-
+async function checkSchemeId (req, res, next) {
+  try {
+    const schemaId = await Schema.get(req.params.id)
+    if (!schemaId) {
+        res.status(404).json({ message: 'no such user'})
+    } else {
+        req.schemaId = schemaId
+        res.json(schemaId)
+        next()
+    }
+} catch (error) {
+    next()
+}
 }
 
 /*
